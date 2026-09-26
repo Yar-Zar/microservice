@@ -26,8 +26,6 @@ public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand,
                 StatusCode = "200"
             };
 
-            // validation
-
             // check duplicate product name
             var existingProduct = await _productRepository.CheckExistsAsync(x => x.Name == request.Product.Name);
             if (existingProduct)
