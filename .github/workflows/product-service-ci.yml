@@ -1,0 +1,38 @@
+﻿name: Product Service CI/CD
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'ProductsService.Api/**'
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - 'ProductsService.Api/**'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore Dependencies
+        run: dotnet restore ProductsService.Api/ProductsService.Api.csproj
+
+      - name: Build Project
+        run: dotnet build ProductsService.Api/ProductsService.Api.csproj --no-restore --configuration Release
+
+  deploy-to-render:
+    needs: build-and-test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Render Deploy Hook
+        run: |
+          curl -X POST "${{ secrets.RENDER_PRODUCT_DEPLOY_HOOK }}"
