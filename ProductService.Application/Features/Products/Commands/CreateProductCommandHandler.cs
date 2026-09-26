@@ -40,7 +40,7 @@ public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand,
                 {
                     var product = request.Product.Adapt<Product>();
 
-                    _logger.LogDebug("Adding product entity to repository {@Product}", product);
+                    //_logger.LogDebug("Adding product entity to repository {@Product}", product);
                     await _productRepository.AddAsync(product);
                     await _unitOfWork.SaveChangesAsync(ct);
 
