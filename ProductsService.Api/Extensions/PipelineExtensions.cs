@@ -10,8 +10,8 @@ public static class PipelineExtensions
             options.MessageTemplate = "HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms";
         });
 
-        if (app.Environment.IsDevelopment())
-        {
+        //if (app.Environment.IsDevelopment())
+        //{
             app.UseSwagger();
             app.UseSwaggerUI(options =>
             {
@@ -29,7 +29,7 @@ public static class PipelineExtensions
             //           .WithLayout(ScalarLayout.Modern);
 
             //});
-        }
+        //}
 
         app.MapHealthChecks("/health");
         app.UseHttpsRedirection();
