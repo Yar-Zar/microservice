@@ -5,10 +5,16 @@ on:
     branches: [ "main" ]
     paths:
       - 'ProductsService.Api/**'
+      - 'ProductService.Application/**'
+      - 'ProductService.Domain/**'
+      - 'ProductService.Infrastructure/**'
   pull_request:
     branches: [ "main" ]
     paths:
       - 'ProductsService.Api/**'
+      - 'ProductService.Application/**'
+      - 'ProductService.Domain/**'
+      - 'ProductService.Infrastructure/**'
 
 jobs:
   build-and-test:
