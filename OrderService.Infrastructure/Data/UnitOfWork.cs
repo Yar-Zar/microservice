@@ -1,8 +1,10 @@
-﻿namespace ProductService.Infrastructure.Data;
+﻿using OrderService.Application.Interfaces.IRepository;
+
+namespace OrderService.Infrastructure.Data;
 public class UnitOfWork : IUnitOfWork
 {
-    private readonly ProductDbContext _db;
-    public UnitOfWork(ProductDbContext db) => _db = db;
+    private readonly OrderDbContext _db;
+    public UnitOfWork(OrderDbContext db) => _db = db;
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {

@@ -49,8 +49,6 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
             await _unitOfWork.ExecuteInTransactionAsync(async () =>
             {
                 request.Product.Adapt(product);
-
-                await _unitOfWork.SaveChangesAsync(ct);
             }, ct);
 
             _logger.LogInformation("Product {ProductId} updated successfully.", request.Id);

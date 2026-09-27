@@ -1,0 +1,20 @@
+﻿global using Microsoft.EntityFrameworkCore.Storage;
+global using FluentValidation;
+global using Mapster;
+global using MapsterMapper;
+global using Microsoft.Extensions.DependencyInjection;
+global using System.ComponentModel.DataAnnotations;
+global using OrderService.Application.Common.Models;
+global using OrderService.Application.DTOs;
+global using OrderService.Application.Common.Exceptions;
+global using OrderService.Application.Interfaces.IRepository;
+global using OrderService.Domain.Entities;
+global using OrderService.Application.Common.Cache;
+global using OrderService.Application.Validations.OrderItems;
+global using OrderService.Application.Interfaces.IService; 
+global using OrderService.Application.Services;
+global using Microsoft.AspNetCore.Http; 
+global using Microsoft.Extensions.Logging;
+global using System.Linq.Expressions;
+global using System.Reflection;
+
