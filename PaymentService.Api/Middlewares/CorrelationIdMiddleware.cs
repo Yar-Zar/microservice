@@ -1,4 +1,4 @@
-﻿namespace OrderService.Api.Middlewares;
+﻿namespace PaymentService.Api.Middlewares;
 
 public class CorrelationIdMiddleware
 {

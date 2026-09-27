@@ -1,0 +1,69 @@
+﻿name: Payment Service CI/CD
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'PaymentService.Api/**'
+      - 'PaymentService.Application/**'
+      - 'PaymentService.Domain/**'
+      - 'PaymentService.Infrastructure/**'
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - 'PaymentService.Api/**'
+      - 'PaymentService.Application/**'
+      - 'PaymentService.Domain/**'
+      - 'PaymentService.Infrastructure/**'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore Dependencies
+        run: dotnet restore PaymentService.Api/PaymentService.Api.csproj
+
+      - name: Build Project
+        run: dotnet build PaymentService.Api/PaymentService.Api.csproj --no-restore --configuration Release
+
+  docker-build-and-push:
+    needs: build-and-test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./PaymentService.Api/Dockerfile 
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/payment-service:latest
+
+  deploy-to-render:
+    needs: docker-build-and-push
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Render Deploy Hook
+        run: |
+          curl -X POST "${{ secrets.RENDER_PAYMENT_DEPLOY_HOOK }}"

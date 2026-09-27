@@ -1,5 +1,6 @@
 ﻿global using Microsoft.EntityFrameworkCore.Storage;
 global using FluentValidation;
+global using MassTransit;
 global using Mapster;
 global using MapsterMapper;
 global using Microsoft.Extensions.DependencyInjection;

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace OrderService.Application.Services
 {
-    public class Order_Service:IOrderService
+    public class Order_Service : IOrderService
     {
         private readonly IRedisHashProvider _cache;
         private readonly IOrderRepository _repo;
@@ -43,7 +43,7 @@ namespace OrderService.Application.Services
 
                     throw new FluentValidation.ValidationException(validationResult.Errors);
                 }
-            
+
                 var existingOrder = await _repo.GetByIdAsync(dto.Id, ct);
                 if (existingOrder != null)
                 {
@@ -120,11 +120,11 @@ namespace OrderService.Application.Services
 
             try
             {
-                if(orderId != dto.Id)
+                if (orderId != dto.Id)
                 {
                     throw new InvalidOperationException($"OrderId in the URL '{orderId}' does not match OrderId in the body '{dto.Id}'.");
                 }
-               
+
                 var validationResult = await _updatevalidator.ValidateAsync(dto, ct);
                 if (!validationResult.IsValid)
                 {
@@ -147,7 +147,7 @@ namespace OrderService.Application.Services
 
                 return new ResponseModel
                 {
-                    IsSuccess  = true, // Fixed duplicate assignment typo
+                    IsSuccess = true, // Fixed duplicate assignment typo
                     Message = "Order updated successfully.",
                     StatusCode = "200"
                 };
@@ -195,6 +195,31 @@ namespace OrderService.Application.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Failed to get Order by OrderId: {OrderId}", orderId);
+                throw;
+            }
+        }
+
+        public async Task<bool> UpdateOrderStatusAsync(string orderId, CancellationToken ct)
+        {
+            try
+            {
+                await _unitOfWork.ExecuteInTransactionAsync(async () =>
+                {
+                    var existEntity = await _repo.GetByIdAsync(orderId, ct);
+                    if (existEntity == null)
+                    {
+                        throw new NotFoundException($"Order was not found for ID: '{orderId}'.");
+                    }
+                    existEntity.Status = "Completed"; // Example status update
+                }, ct);
+
+                _logger.LogInformation("Order Status updated successfully. OrderId: {OrderId}", orderId);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to update Order Status for OrderId: {OrderId}", orderId);
                 throw;
             }
         }

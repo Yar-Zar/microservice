@@ -1,4 +1,4 @@
-﻿namespace OrderService.Api.Extensions;
+﻿namespace PaymentService.Api.Extensions;
 public static class ServiceExtensions
 {
     public static IServiceCollection AddApiServices(this IServiceCollection services, IConfiguration configuration)
@@ -8,11 +8,9 @@ public static class ServiceExtensions
         services.AddSwaggerGen();
         services.AddHealthChecks();
         services.AddHttpContextAccessor();
-        services.AddMassTransit(x =>
+        // Add MassTransit with RabbitMQ
+       services.AddMassTransit(x =>
         {
-           
-            x.AddConsumers(typeof(Program).Assembly);
-
             x.UsingRabbitMq((context, cfg) =>
             {
                 var host = configuration["RabbitMQSettings:Host"] ?? "localhost";
@@ -24,9 +22,6 @@ public static class ServiceExtensions
                     h.Username(username);
                     h.Password(password);
                 });
-
-                
-                cfg.ConfigureEndpoints(context);
             });
         });
         //services.AddAuthorization();

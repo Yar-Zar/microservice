@@ -1,0 +1,21 @@
+﻿global using FluentValidation;
+global using Microsoft.EntityFrameworkCore.Storage;
+global using Mapster;
+global using MassTransit;
+global using MapsterMapper;
+global using Microsoft.Extensions.DependencyInjection;
+global using System.ComponentModel.DataAnnotations;
+global using PaymentService.Application.Common.Models;
+global using PaymentService.Application.DTOs;
+global using PaymentService.Application.Common.Exceptions;
+global using PaymentService.Application.Interfaces.IRepository;
+global using PaymentService.Domain.Entities;
+global using PaymentService.Application.Interfaces.IService; 
+global using PaymentService.Application.Validations;
+global using PaymentService.Application.Services;
+global using Microsoft.AspNetCore.Http; 
+global using System.ComponentModel.DataAnnotations.Schema;
+global using Microsoft.Extensions.Logging;
+global using System.Linq.Expressions;
+global using System.Reflection;
+

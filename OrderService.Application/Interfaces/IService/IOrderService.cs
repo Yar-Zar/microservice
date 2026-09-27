@@ -9,4 +9,5 @@ public interface IOrderService
     public Task<ResponseModel> UpdateOrderAsync(string orderId, OrderDTO dto, CancellationToken ct);
     public Task<IEnumerable<Order>> GetAllOrderAsync(AppFilter filter, CancellationToken ct);
     public Task<OrderDTO> GetByIdAsync(string orderId, CancellationToken ct);
+    public Task<bool> UpdateOrderStatusAsync(string orderId, CancellationToken ct);
 }

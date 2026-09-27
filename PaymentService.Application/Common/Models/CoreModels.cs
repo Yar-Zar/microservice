@@ -1,4 +1,4 @@
-﻿namespace OrderService.Application.Common.Models;
+﻿namespace PaymentService.Application.Common.Models;
 public record DropdownDto(int Id, string Text);
 public record PaymentCompletedEvent(string OrderId);
 public class AppFilter
