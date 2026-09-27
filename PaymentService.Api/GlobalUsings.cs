@@ -16,5 +16,4 @@ global using PaymentService.Infrastructure.Common.Extensions;
 global using Serilog.Debugging;
 global using System.Text;
 global using Serilog;
-global using Serilog.Context; 
 global using MassTransit; 
