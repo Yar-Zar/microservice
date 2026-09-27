@@ -1,20 +1,20 @@
-﻿name: Product Service CI/CD
+﻿name: Order Service CI/CD
 
 on:
   push:
     branches: [ "main" ]
     paths:
-      - 'ProductsService.Api/**'
-      - 'ProductService.Application/**'
-      - 'ProductService.Domain/**'
-      - 'ProductService.Infrastructure/**'
+      - 'OrderService.Api/**'
+      - 'OrderService.Application/**'
+      - 'OrderService.Domain/**'
+      - 'OrderService.Infrastructure/**'
   pull_request:
     branches: [ "main" ]
     paths:
-      - 'ProductsService.Api/**'
-      - 'ProductService.Application/**'
-      - 'ProductService.Domain/**'
-      - 'ProductService.Infrastructure/**'
+      - 'OrderService.Api/**'
+      - 'OrderService.Application/**'
+      - 'OrderService.Domain/**'
+      - 'OrderService.Infrastructure/**'
 
 jobs:
   build-and-test:
@@ -29,10 +29,10 @@ jobs:
           dotnet-version: '8.0.x'
 
       - name: Restore Dependencies
-        run: dotnet restore ProductsService.Api/ProductsService.Api.csproj
+        run: dotnet restore OrderService.Api/OrderService.Api.csproj
 
       - name: Build Project
-        run: dotnet build ProductsService.Api/ProductsService.Api.csproj --no-restore --configuration Release
+        run: dotnet build OrderService.Api/OrderService.Api.csproj --no-restore --configuration Release
 
   docker-build-and-push:
     needs: build-and-test
@@ -55,9 +55,9 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./ProductsService.Api/Dockerfile 
+          file: ./OrderService.Api/Dockerfile 
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/product-service:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/order-service:latest
 
   deploy-to-render:
     needs: docker-build-and-push
@@ -66,4 +66,4 @@ jobs:
     steps:
       - name: Trigger Render Deploy Hook
         run: |
-          curl -X POST "${{ secrets.RENDER_PRODUCT_DEPLOY_HOOK }}"
+          curl -X POST "${{ secrets.RENDER_ORDER_DEPLOY_HOOK }}"

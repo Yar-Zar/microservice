@@ -1,17 +1,21 @@
-﻿using OrderService.Application.Interfaces.IService;
-
-namespace OrderService.Application.Services
+﻿namespace OrderService.Application.Services
 {
-    public class OrderItemTempService: IOrderItemTempService
+    public class OrderItemTempService : IOrderItemTempService
     {
         private readonly IRedisHashProvider _cache;
         private readonly ILogger<OrderItemTempService> _logger;
+        private readonly OrderItemDTOValidator _createValidator;
+        private readonly UpdateOrderItemValidator _updateValidator;
 
         public OrderItemTempService(
             IRedisHashProvider cache,
+            OrderItemDTOValidator createValidator,
+            UpdateOrderItemValidator updateValidator,
             ILogger<OrderItemTempService> logger)
         {
             _cache = cache;
+            _createValidator = createValidator;
+            _updateValidator = updateValidator;
             _logger = logger;
         }
         public async Task<List<OrderItemDTO>> GetOrderItemTemp(string orderId)
@@ -23,6 +27,11 @@ namespace OrderService.Application.Services
         {
             try
             {
+                var validationResult = await _createValidator.ValidateAsync(request, ct);
+                if (!validationResult.IsValid)
+                {
+                    throw new FluentValidation.ValidationException(validationResult.Errors);
+                }
                 // Check if the item already exists in the temporary cache
                 var exists = await _cache.CheckExistAsync<OrderItemDTO>(request.OrderId, x => x.ProductId == request.ProductId);
 
@@ -65,6 +74,12 @@ namespace OrderService.Application.Services
 
         public async Task<(ResponseModel, List<OrderItemDTO>)> UpdateOrderItemTemp(OrderItemDTO request, CancellationToken ct)
         {
+            var validationResult = await _updateValidator.ValidateAsync(request, ct);
+            if (!validationResult.IsValid)
+            {
+                throw new FluentValidation.ValidationException(validationResult.Errors);
+            }
+
             // Check if the item exists in the temporary cache before updating
             var record = await _cache.GetAsync<OrderItemDTO>(request.OrderId, request.ProductId.ToString());
 
@@ -97,7 +112,7 @@ namespace OrderService.Application.Services
 
             return (response, items?.ToList() ?? new List<OrderItemDTO>());
 
-            
+
         }
 
         public async Task<(ResponseModel, List<OrderItemDTO>)> DeleteOrderItemTemp(string orderId, string productId)
@@ -130,7 +145,7 @@ namespace OrderService.Application.Services
             };
 
             return (response, items?.ToList() ?? new List<OrderItemDTO>());
-            
+
         }
     }
 }

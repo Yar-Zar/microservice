@@ -1,16 +1,16 @@
 ﻿namespace OrderService.Application.Validations.OrderItems
 {
-    public class OrderItemDTOValidator<T> : AbstractValidator<T> where T : class
+    public class OrderItemDTOValidator : AbstractValidator<OrderItemDTO>
     {
-        public OrderItemDTOValidator(Func<T, OrderItemDTO> selector)
+        public OrderItemDTOValidator()
         {
-            RuleFor(oi => selector(oi).ProductId)
+            RuleFor(oi => oi.ProductId)
                 .NotEmpty().WithMessage("ProductId is required.");
 
-            RuleFor(oi => selector(oi).Quantity)
+            RuleFor(oi => oi.Quantity)
                 .GreaterThan(0).WithMessage("Quantity must be greater than zero.");
 
-            RuleFor(oi => selector(oi).UnitPrice)
+            RuleFor(oi => oi.UnitPrice)
                 .GreaterThan(0).WithMessage("UnitPrice must be greater than zero.");
         }
     }

@@ -33,34 +33,53 @@ public class GlobalExceptionHandler
     {
         var statusCode = exception switch
         {
-            UnauthorizedAccessException => HttpStatusCode.Unauthorized,       // 401
+            UnauthorizedAccessException => HttpStatusCode.Unauthorized,        // 401
             FluentValidation.ValidationException => HttpStatusCode.BadRequest,// 400
-            InvalidOperationException => HttpStatusCode.BadRequest,             // 400
-            SecurityException => HttpStatusCode.Forbidden,                    // 403
+            InvalidOperationException => HttpStatusCode.BadRequest,              // 400
+            SecurityException => HttpStatusCode.Forbidden,                     // 403
             KeyNotFoundException => HttpStatusCode.NotFound,                  // 404
-            DuplicateException => HttpStatusCode.Conflict,             // 409
-            ArgumentNullException => HttpStatusCode.BadRequest,               // 400
-            ArgumentException => HttpStatusCode.BadRequest,                   // 400
-            TimeoutException => HttpStatusCode.RequestTimeout,                // 408
-            DbUpdateException => HttpStatusCode.InternalServerError,          // 500
-            OperationCanceledException => (HttpStatusCode)499,                // 499 (Client Closed Request)
+            DuplicateException => HttpStatusCode.Conflict,                       // 409
+            ArgumentNullException => HttpStatusCode.BadRequest,                // 400
+            ArgumentException => HttpStatusCode.BadRequest,                    // 400
+            TimeoutException => HttpStatusCode.RequestTimeout,                 // 408
+            DbUpdateException => HttpStatusCode.InternalServerError,           // 500
+            OperationCanceledException => (HttpStatusCode)499,                 // 499 (Client Closed Request)
             _ => HttpStatusCode.InternalServerError                          // 500
         };
 
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = (int)statusCode;
 
-        var response = new ResponseModel
-        {
-            IsSuccess = false,
-            
-            Message = statusCode == HttpStatusCode.InternalServerError
-                      ? "An unexpected error occurred. Please try again later."
-                      : exception.Message,
-            StatusCode = ((int)statusCode).ToString()
-        };
+        object responseObj;
 
-        var json = JsonSerializer.Serialize(response);
+
+        if (exception is FluentValidation.ValidationException fluentException)
+        {
+            var errors = fluentException.Errors
+                .GroupBy(e => e.PropertyName, e => e.ErrorMessage)
+                .ToDictionary(failureGroup => failureGroup.Key, failureGroup => failureGroup.ToArray());
+
+            responseObj = new
+            {
+                IsSuccess = false,
+                Message = "Validation failed",
+                StatusCode = ((int)statusCode).ToString(),
+                Errors = errors 
+            };
+        }
+        else
+        {
+            responseObj = new ResponseModel
+            {
+                IsSuccess = false,
+                Message = statusCode == HttpStatusCode.InternalServerError
+                        ? "An unexpected error occurred. Please try again later."
+                        : exception.Message,
+                StatusCode = ((int)statusCode).ToString()
+            };
+        }
+
+        var json = JsonSerializer.Serialize(responseObj);
         return context.Response.WriteAsync(json);
     }
 }

@@ -1,4 +1,7 @@
-﻿namespace OrderService.Application.Services
+﻿using OrderService.Application.Validations.Orders;
+using System.ComponentModel.DataAnnotations;
+
+namespace OrderService.Application.Services
 {
     public class Order_Service:IOrderService
     {
@@ -7,13 +10,17 @@
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<Order_Service> _logger;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly OrderDTOValidator _validator;
+        private readonly UpdateOrderValidator _updatevalidator;
 
-        public Order_Service(IRedisHashProvider cache, IOrderRepository repo, IHttpContextAccessor httpContextAccessor, ILogger<Order_Service> logger, IUnitOfWork unitOfWork)
+        public Order_Service(IRedisHashProvider cache, IOrderRepository repo, IHttpContextAccessor httpContextAccessor, OrderDTOValidator validator, UpdateOrderValidator updatevalidator, ILogger<Order_Service> logger, IUnitOfWork unitOfWork)
         {
             _cache = cache;
             _repo = repo;
             _logger = logger;
             _unitOfWork = unitOfWork;
+            _validator = validator;
+            _updatevalidator = updatevalidator;
             _httpContextAccessor = httpContextAccessor;
         }
         #region Order Item
@@ -30,6 +37,13 @@
 
             try
             {
+                var validationResult = await _validator.ValidateAsync(dto, ct);
+                if (!validationResult.IsValid)
+                {
+
+                    throw new FluentValidation.ValidationException(validationResult.Errors);
+                }
+            
                 var existingOrder = await _repo.GetByIdAsync(dto.Id, ct);
                 if (existingOrder != null)
                 {
@@ -106,6 +120,17 @@
 
             try
             {
+                if(orderId != dto.Id)
+                {
+                    throw new InvalidOperationException($"OrderId in the URL '{orderId}' does not match OrderId in the body '{dto.Id}'.");
+                }
+               
+                var validationResult = await _updatevalidator.ValidateAsync(dto, ct);
+                if (!validationResult.IsValid)
+                {
+
+                    throw new FluentValidation.ValidationException(validationResult.Errors);
+                }
                 var existEntity = await _repo.GetByIdAsync(orderId, ct);
                 if (existEntity == null)
                 {

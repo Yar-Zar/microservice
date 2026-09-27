@@ -5,7 +5,7 @@ public class UpdateOrderValidator : AbstractValidator<OrderDTO>
     {
         RuleFor(x => x.Id)
             .NotEmpty().WithMessage("Order ID is required.");
-        Include(new OrderDTOValidator<OrderDTO>(x => x));
+        Include(new OrderDTOValidator());
     }
 }
 
