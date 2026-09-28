@@ -30,29 +30,29 @@ public static class DependencyInjectionExtensions
         var secretKey = jwtSettings["Key"] ?? "DefaultSecretKey1234567890";
         var key = Encoding.ASCII.GetBytes(secretKey);
 
-        services.AddAuthentication(options =>
-        {
-            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        })
-        .AddJwtBearer(options =>
-        {
-            options.RequireHttpsMetadata = false;
-            options.SaveToken = true;
-            options.TokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(key),
-                ValidateIssuer = true,
-                ValidIssuer = jwtSettings["Issuer"],
-                ValidateAudience = true,
-                ValidAudience = jwtSettings["Audience"],
-                ValidateLifetime = true
-            };
-        });
+        //services.AddAuthentication(options =>
+        //{
+        //    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        //    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        //})
+        //.AddJwtBearer(options =>
+        //{
+        //    options.RequireHttpsMetadata = false;
+        //    options.SaveToken = true;
+        //    options.TokenValidationParameters = new TokenValidationParameters
+        //    {
+        //        ValidateIssuerSigningKey = true,
+        //        IssuerSigningKey = new SymmetricSecurityKey(key),
+        //        ValidateIssuer = true,
+        //        ValidIssuer = jwtSettings["Issuer"],
+        //        ValidateAudience = true,
+        //        ValidAudience = jwtSettings["Audience"],
+        //        ValidateLifetime = true
+        //    };
+        //});
 
-        // 3. Authorization
-        services.AddAuthorization();
+        //// 3. Authorization
+        //services.AddAuthorization();
 
         // 4. Add YARP Reverse Proxy Services
         services.AddReverseProxy()
@@ -70,8 +70,15 @@ public static class DependencyInjectionExtensions
             options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
             options.AddFixedWindowLimiter("fixed", opt =>
             {
-                opt.PermitLimit = 100;
+                opt.PermitLimit = 3;
                 opt.Window = TimeSpan.FromSeconds(10);
+                opt.QueueLimit = 2;
+            });
+            options.AddFixedWindowLimiter("strict", cfg =>
+            {
+                cfg.PermitLimit = 10;                  
+                cfg.Window = TimeSpan.FromSeconds(10);
+                cfg.QueueLimit = 0;
             });
         });
 

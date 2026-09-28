@@ -41,8 +41,8 @@ public static class ApplicationBuilderExtensions
         });
 
         // 5. Authentication & Authorization Middlewares
-        app.UseAuthentication();
-        app.UseAuthorization();
+        //app.UseAuthentication();
+        //app.UseAuthorization();
 
         // 6. Map YARP Reverse Proxy Middleware
         app.MapReverseProxy();
