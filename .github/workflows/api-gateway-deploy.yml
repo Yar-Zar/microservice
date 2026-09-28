@@ -53,10 +53,10 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/api-gateway:latest
           build-args: |
-            PRODUCT_SERVICE_URL=${{ secrets.PRODUCT_SERVICE_URL }}
-            ORDER_SERVICE_URL=${{ secrets.ORDER_SERVICE_URL }}
-            PAYMENT_SERVICE_URL=${{ secrets.PAYMENT_SERVICE_URL }}
-            USER_SERVICE_URL=${{ secrets.USER_SERVICE_URL }}
+            ReverseProxy__Clusters__product-cluster__Destinations__destination1__Address=${{ secrets.PRODUCT_SERVICE_URL }}
+            ReverseProxy__Clusters__order-cluster__Destinations__destination1__Address=${{ secrets.ORDER_SERVICE_URL }}
+            ReverseProxy__Clusters__payment-cluster__Destinations__destination1__Address=${{ secrets.PAYMENT_SERVICE_URL }}
+            ReverseProxy__Clusters__user-cluster__Destinations__destination1__Address=${{ secrets.USER_SERVICE_URL }}
 
   deploy-to-render:
     needs: docker-build-and-push
