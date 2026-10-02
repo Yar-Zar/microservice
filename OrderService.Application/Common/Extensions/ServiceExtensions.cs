@@ -1,7 +1,10 @@
-﻿namespace OrderService.Application.Common.Extensions;
+﻿using Microsoft.Extensions.Configuration;
+using Shared.GrpcContracts.Payment;
+
+namespace OrderService.Application.Common.Extensions;
 public static class ServiceExtensions
 {
-    public static IServiceCollection AddApplicationServices(this IServiceCollection services)
+    public static IServiceCollection AddApplicationServices(this IServiceCollection services,IConfiguration configuration)
     {
        
         #region Mapster Configuration

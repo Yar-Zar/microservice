@@ -1,8 +1,11 @@
-﻿namespace PaymentService.Application.Services
+﻿using Shared.Contracts.Events;
+using Shared.GrpcContracts.Order;
+
+namespace PaymentService.Application.Services
 {
-    public class Payment_Service:IPaymentService
+    public class Payment_Service : IPaymentService
     {
-      
+
         private readonly IPaymentRepository _repo;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<Payment_Service> _logger;
@@ -10,9 +13,10 @@
         private readonly PaymentDTOValidator _validator;
         private readonly UpdatePaymentDTOValidator _updatevalidator;
         private readonly IPublishEndpoint _publishEndpoint;
-        public Payment_Service(IPaymentRepository repo, IPublishEndpoint publishEndpoint, IHttpContextAccessor httpContextAccessor, PaymentDTOValidator validator, UpdatePaymentDTOValidator updatevalidator, ILogger<Payment_Service> logger, IUnitOfWork unitOfWork)
+        private readonly OrderGrpcService.OrderGrpcServiceClient _orderClient;
+        public Payment_Service(IPaymentRepository repo, IPublishEndpoint publishEndpoint, OrderGrpcService.OrderGrpcServiceClient orderClient ,IHttpContextAccessor httpContextAccessor, PaymentDTOValidator validator, UpdatePaymentDTOValidator updatevalidator, ILogger<Payment_Service> logger, IUnitOfWork unitOfWork)
         {
-            
+
             _repo = repo;
             _logger = logger;
             _unitOfWork = unitOfWork;
@@ -20,6 +24,7 @@
             _updatevalidator = updatevalidator;
             _publishEndpoint = publishEndpoint;
             _httpContextAccessor = httpContextAccessor;
+            _orderClient = orderClient;
         }
 
         #region Payment
@@ -38,16 +43,25 @@
 
                 await _unitOfWork.ExecuteInTransactionAsync(async () =>
                 {
-                  
+
                     var entity = dto.Adapt<Payment>();
                     await _repo.AddAsync(entity);
                 }, ct);
 
-                
+
                 _logger.LogInformation("Payment saved successfully. PaymentId: {PaymentId}", dto.Id);
                 if (dto.PaymentStatus.Equals("Paid", StringComparison.OrdinalIgnoreCase))
                 {
-                    await _publishEndpoint.Publish<PaymentCompletedEvent>(new(dto.OrderId), ct);
+                   // await _publishEndpoint.Publish<CreatePaymentEvent>(new(dto.OrderId), ct);// asynchronously publish the event to the message broker
+                    var response = await _orderClient.UpdateOrderStatusAsync(new UpdateOrderStatusRequest
+                    {
+                        OrderId = dto.OrderId,
+                        Status = "Completed"
+                    }, cancellationToken: ct);// Call the gRPC service to update the order status
+                    if (!response.Success)
+                    {
+                        await DeleteAsync(dto.Id, ct); // Rollback the payment if order status update fails
+                    }
                 }
                 return new ResponseModel
                 {
@@ -61,7 +75,7 @@
                 _logger.LogError(ex, "Failed to save Payment for PaymentId: {PaymentId}", dto.Id);
                 throw;
             }
-            
+
         }
 
         public async Task<ResponseModel> DeleteAsync(int id, CancellationToken ct)
@@ -103,11 +117,11 @@
 
             try
             {
-                if(PaymentId != dto.Id)
+                if (PaymentId != dto.Id)
                 {
                     throw new InvalidOperationException($"PaymentId in the URL '{PaymentId}' does not match PaymentId in the body '{dto.Id}'.");
                 }
-               
+
                 var validationResult = await _updatevalidator.ValidateAsync(dto, ct);
                 if (!validationResult.IsValid)
                 {
@@ -123,14 +137,14 @@
                 await _unitOfWork.ExecuteInTransactionAsync(async () =>
                 {
                     dto.Adapt(existEntity);
-                   
+
                 }, ct);
 
                 _logger.LogInformation("Payment updated successfully. PaymentId: {PaymentId}", PaymentId);
 
                 return new ResponseModel
                 {
-                    IsSuccess  = true, // Fixed duplicate assignment typo
+                    IsSuccess = true, // Fixed duplicate assignment typo
                     Message = "Payment updated successfully.",
                     StatusCode = "200"
                 };
@@ -144,7 +158,7 @@
 
         public async Task<IEnumerable<PaymentDTO>> GetAllPaymentAsync(AppFilter filter, CancellationToken ct)
         {
-           return await _repo.GetAllAsync<PaymentDTO>(filter, ct);
+            return await _repo.GetAllAsync<PaymentDTO>(filter, ct);
         }
 
         public async Task<PaymentDTO> GetByIdAsync(int PaymentId, CancellationToken ct)
@@ -158,7 +172,7 @@
                 }
 
                 var dto = entity.Adapt<PaymentDTO>();
-                
+
 
                 _logger.LogInformation("Successfully retrieved Payment for PaymentId: {PaymentId}", PaymentId);
                 return dto;
@@ -189,6 +203,33 @@
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Failed to get Payment by OrderId: {OrderId}", orderId);
+                throw;
+            }
+        }
+
+        public async Task<bool> UpdatePaymentStatusAsync(string orderId, string status, CancellationToken ct)
+        {
+            var existEntity = await _repo.GetByOrderIdAsync(orderId, ct);
+            try
+            {
+                await _unitOfWork.ExecuteInTransactionAsync(async () =>
+                {
+                   
+                    if (existEntity == null)
+                    {
+                        throw new NotFoundException($"Payment was not found for OrderId: '{orderId}'.");
+                    }
+                    existEntity.PaymentStatus = status;
+                }, ct);
+
+                _logger.LogInformation("Payment Status updated successfully. OrderId: {OrderId}", orderId);
+                return true;
+            }
+            catch (Exception ex)
+            {
+             
+                await _publishEndpoint.Publish(new PaymentFailEvent(orderId), ct);
+                _logger.LogError(ex, "Failed to update Payment Status for OrderId: {OrderId}", orderId);
                 throw;
             }
         }

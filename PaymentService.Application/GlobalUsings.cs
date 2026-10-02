@@ -3,11 +3,11 @@ global using Microsoft.EntityFrameworkCore.Storage;
 global using Mapster;
 global using MassTransit;
 global using MapsterMapper;
+global using Shared.Contracts.Models;
+global using Shared.Contracts.Exceptions;
 global using Microsoft.Extensions.DependencyInjection;
 global using System.ComponentModel.DataAnnotations;
-global using PaymentService.Application.Common.Models;
 global using PaymentService.Application.DTOs;
-global using PaymentService.Application.Common.Exceptions;
 global using PaymentService.Application.Interfaces.IRepository;
 global using PaymentService.Domain.Entities;
 global using PaymentService.Application.Interfaces.IService; 
@@ -18,4 +18,7 @@ global using System.ComponentModel.DataAnnotations.Schema;
 global using Microsoft.Extensions.Logging;
 global using System.Linq.Expressions;
 global using System.Reflection;
+global using Shared.Contracts;
+
+
 

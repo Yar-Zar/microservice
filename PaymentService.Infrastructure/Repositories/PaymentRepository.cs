@@ -1,4 +1,6 @@
-﻿namespace PaymentService.Infrastructure.Repositories;
+﻿using Shared.GrpcContracts.Payment;
+
+namespace PaymentService.Infrastructure.Repositories;
 public class PaymentRepository : IPaymentRepository
 {
     private readonly PaymentDbContext _context;
@@ -104,7 +106,23 @@ public class PaymentRepository : IPaymentRepository
 
         return await _queryHelper.QueryAsync<T>(selector.RawSql, parameters, ct);
     }
+    public async Task<List<PaymentResponseDto>> GetByOrderIdsAsync(IEnumerable<string> orderIds, CancellationToken ct)
+    {
 
+        var payments = await _context.Payments
+     .Where(p => orderIds.Contains(p.OrderId))
+     .Select(x => new PaymentResponseDto
+     {
+         Id = x.Id,
+         OrderId = x.OrderId,
+         Amount = (double)x.Amount,
+         Currency = x.Currency,
+         PaymentStatus = x.PaymentStatus
+     })
+     .ToListAsync(ct);
+
+        return payments;
+    }
     #endregion
 
 

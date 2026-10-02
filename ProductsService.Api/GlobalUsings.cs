@@ -1,11 +1,11 @@
 ﻿global using MediatR;
 global using Microsoft.AspNetCore.Mvc;
-global using ProductService.Application.Common.Models;
+global using Shared.Contracts.Models;
+global using Shared.Contracts.Exceptions;
 global using ProductService.Application.DTOs;
 global using ProductService.Application.Features.Products.Commands;
 global using ProductService.Application.Features.Products.Queries;
 global using Microsoft.EntityFrameworkCore;
-global using ProductService.Application.Common.Exceptions;
 global using System.Net;
 global using System.Security;
 global using System.Text.Json;

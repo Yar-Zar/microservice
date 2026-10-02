@@ -1,4 +1,7 @@
-﻿namespace PaymentService.Application.Common.Extensions;
+﻿using Microsoft.Extensions.Configuration;
+using Shared.GrpcContracts.Order;
+
+namespace PaymentService.Application.Common.Extensions;
 public static class ServiceExtensions
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
@@ -15,7 +18,10 @@ public static class ServiceExtensions
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
         #endregion
 
+       
+
         services.AddScoped<IPaymentService, Payment_Service>();
+       
 
         return services;
     }

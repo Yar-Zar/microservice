@@ -1,0 +1,17 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "Shared.GrpcContracts.Product";
+package product;
+
+message RequestProductIds {
+  repeated int32 product_ids = 1;
+}
+message ProductResponseDto {
+  int32 id = 1;
+  string name = 2;
+  double price = 3;
+}
+
+message ProductListResponse {
+  repeated ProductResponseDto items = 1;
+}

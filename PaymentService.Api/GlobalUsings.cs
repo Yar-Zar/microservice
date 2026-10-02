@@ -1,7 +1,7 @@
-﻿global using PaymentService.Application.Common.Models;
-global using PaymentService.Application.DTOs;
+﻿global using PaymentService.Application.DTOs;
+global using Shared.Contracts.Models;
+global using Shared.Contracts.Exceptions;
 global using Microsoft.EntityFrameworkCore;
-global using PaymentService.Application.Common.Exceptions;
 global using System.Net;
 global using System.Security;
 global using System.Text.Json;

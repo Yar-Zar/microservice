@@ -11,6 +11,7 @@ public static class OrderEndpoints
         group.MapDelete("/{orderId}", DeleteAsync).WithTags("Orders");
         group.MapGet("/{orderId}", GetByIdAsync).WithTags("Orders");
         group.MapGet("/", GetAllOrderAsync).WithTags("Orders");
+        group.MapGet("/GetOrder/", GetOrdersAsync).WithTags("Orders");
 
         //Temp Order Item
         group.MapGet("/temp/{orderId}", GetTempOrderItems).WithTags("Temporary Order Items");
@@ -33,6 +34,8 @@ public static class OrderEndpoints
     => Results.Ok(await orderService.GetByIdAsync(orderId, ct));
     private static async Task<IResult> GetAllOrderAsync(IOrderService orderService, [AsParameters] AppFilter filter, CancellationToken ct)
     => Results.Ok(await orderService.GetAllOrderAsync(filter, ct));
+    private static async Task<IResult> GetOrdersAsync(IOrderService orderService, [AsParameters] AppFilter filter, CancellationToken ct)
+   => Results.Ok(await orderService.GetOrdersAsync(filter, ct));
     #endregion
 
     #region OrderItem

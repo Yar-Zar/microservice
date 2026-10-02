@@ -1,0 +1,8 @@
+﻿syntax = "proto3";
+option csharp_namespace = "Shared.GrpcContracts.Product";
+package product;
+import "Common/product_messages.proto";
+service ProductGrpcService {
+  rpc GetProductsByIds (RequestProductIds) returns (ProductListResponse);
+}
+

@@ -1,0 +1,9 @@
+﻿syntax = "proto3";
+option csharp_namespace = "Shared.GrpcContracts.Payment";
+package payment;
+import "Common/payment_messages.proto";
+service PaymentGrpcService {
+  rpc RefundPayment (RefundPaymentRequest) returns (RefundPaymentResponse);
+  rpc GetPaymentsByOrderIds (RequestOrderIdList) returns (PaymentListResponse);
+}
+

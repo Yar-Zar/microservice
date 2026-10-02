@@ -1,0 +1,14 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "Shared.GrpcContracts.Order";
+package order;
+
+message UpdateOrderStatusRequest {
+  string order_id = 1;
+  string status = 2;
+}
+
+message UpdateOrderStatusResponse {
+  bool success = 1;
+  string message = 2;
+}

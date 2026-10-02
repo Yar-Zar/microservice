@@ -1,4 +1,6 @@
-﻿namespace OrderService.Application.Consummer;
+﻿using Shared.Contracts.Events;
+
+namespace OrderService.Application.Consummer;
 
 public class PaymentCompletedConsumer : IConsumer<PaymentCompletedEvent>
 {

@@ -20,8 +20,17 @@
         }
         public async Task<List<OrderItemDTO>> GetOrderItemTemp(string orderId)
         {
-            var items = await _cache.GetAllAsync<OrderItemDTO>(orderId);
-            return items;
+            try { 
+                var items = await _cache.GetAllAsync<OrderItemDTO>(orderId);
+                return items;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to retrieve temporary order items for OrderId: {OrderId}", orderId);
+                throw;
+            }   
+            //var items = await _cache.GetAllAsync<OrderItemDTO>(orderId);
+            //return items;
         }
         public async Task<(ResponseModel, List<OrderItemDTO>)> AddOrderItemTemp(OrderItemDTO request, CancellationToken ct)
         {

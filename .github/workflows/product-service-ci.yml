@@ -8,6 +8,7 @@ on:
       - 'ProductService.Application/**'
       - 'ProductService.Domain/**'
       - 'ProductService.Infrastructure/**'
+      - 'Shared.Contracts/**'
   pull_request:
     branches: [ "main" ]
     paths:
@@ -15,6 +16,7 @@ on:
       - 'ProductService.Application/**'
       - 'ProductService.Domain/**'
       - 'ProductService.Infrastructure/**'
+      - 'Shared.Contracts/**'
 
 jobs:
   build-and-test:
@@ -32,6 +34,9 @@ jobs:
         run: dotnet restore ProductsService.Api/ProductsService.Api.csproj
 
       - name: Build Project
+        env:
+          ConnectionStrings__DefaultConnection: ${{ secrets.ConnectionStrings__DefaultConnection }}
+          Serilog__WriteTo__1__Args__connectionString: ${{ secrets.Serilog__WriteTo__1__Args__connectionString }}
         run: dotnet build ProductsService.Api/ProductsService.Api.csproj --no-restore --configuration Release
 
   docker-build-and-push:

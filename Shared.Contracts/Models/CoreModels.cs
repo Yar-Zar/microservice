@@ -1,6 +1,5 @@
-﻿namespace PaymentService.Application.Common.Models;
+﻿namespace Shared.Contracts.Models;
 public record DropdownDto(int Id, string Text);
-public record PaymentCompletedEvent(string OrderId);
 public class AppFilter
 {
     public int? CurrentPageNo { get; set; }

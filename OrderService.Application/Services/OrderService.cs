@@ -1,5 +1,11 @@
-﻿using OrderService.Application.Validations.Orders;
+﻿using OrderService.Application.DTOs;
+using OrderService.Application.Validations.Orders;
+using Shared.Contracts.Events;
+using Shared.GrpcContracts.Payment;
+using Shared.GrpcContracts.Product;
 using System.ComponentModel.DataAnnotations;
+using static Shared.GrpcContracts.Payment.PaymentGrpcService;
+using static Shared.GrpcContracts.Product.ProductGrpcService;
 
 namespace OrderService.Application.Services
 {
@@ -12,8 +18,10 @@ namespace OrderService.Application.Services
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly OrderDTOValidator _validator;
         private readonly UpdateOrderValidator _updatevalidator;
-
-        public Order_Service(IRedisHashProvider cache, IOrderRepository repo, IHttpContextAccessor httpContextAccessor, OrderDTOValidator validator, UpdateOrderValidator updatevalidator, ILogger<Order_Service> logger, IUnitOfWork unitOfWork)
+        private readonly IPublishEndpoint _publishEndpoint;
+        private readonly PaymentGrpcServiceClient _paymentClient;
+        private readonly ProductGrpcServiceClient _productClient;
+        public Order_Service(IRedisHashProvider cache, IOrderRepository repo, IHttpContextAccessor httpContextAccessor, OrderDTOValidator validator, UpdateOrderValidator updatevalidator, ILogger<Order_Service> logger, IUnitOfWork unitOfWork, IPublishEndpoint publishEndpoint, PaymentGrpcServiceClient paymentClient, ProductGrpcServiceClient productClient)
         {
             _cache = cache;
             _repo = repo;
@@ -22,6 +30,9 @@ namespace OrderService.Application.Services
             _validator = validator;
             _updatevalidator = updatevalidator;
             _httpContextAccessor = httpContextAccessor;
+            _publishEndpoint = publishEndpoint;
+            _paymentClient = paymentClient;
+            _productClient = productClient;
         }
         #region Order Item
         public async Task<IEnumerable<OrderItemDTO>> GetItemsByOrderIdAsync(string orderId, CancellationToken ct)
@@ -50,15 +61,15 @@ namespace OrderService.Application.Services
                     throw new DuplicateException($"Order with OrderId: '{dto.Id}' already exists.");
                 }
 
-                var cachedItems = await _cache.GetAllAsync<OrderItemDTO>(dto.Id);
-                if (cachedItems.Count == 0)
-                {
-                    throw new NotFoundException($"No order items found for OrderId: '{dto.Id}'");
-                }
+                //var cachedItems = await _cache.GetAllAsync<OrderItemDTO>(dto.Id);
+                //if (cachedItems.Count == 0)
+                //{
+                //    throw new NotFoundException($"No order items found for OrderId: '{dto.Id}'");
+                //}
 
                 await _unitOfWork.ExecuteInTransactionAsync(async () =>
                 {
-                    dto.OrderItems = cachedItems;
+                    //dto.OrderItems = cachedItems;
                     var entity = dto.Adapt<Order>();
                     await _repo.AddAsync(entity);
                 }, ct);
@@ -208,20 +219,76 @@ namespace OrderService.Application.Services
                     var existEntity = await _repo.GetByIdAsync(orderId, ct);
                     if (existEntity == null)
                     {
+                        
                         throw new NotFoundException($"Order was not found for ID: '{orderId}'.");
+                      
                     }
                     existEntity.Status = "Completed"; // Example status update
                 }, ct);
 
                 _logger.LogInformation("Order Status updated successfully. OrderId: {OrderId}", orderId);
-
+                await _publishEndpoint.Publish(new OrderStatusSuccessedEvent(orderId), ct);
                 return true;
             }
             catch (Exception ex)
             {
+                await _publishEndpoint.Publish(new OrderStatusFailedEvent(orderId), ct);
                 _logger.LogError(ex, "Failed to update Order Status for OrderId: {OrderId}", orderId);
                 throw;
             }
+        }
+
+        public async Task<IEnumerable<OrderListViewDTO>> GetOrdersAsync(AppFilter filter, CancellationToken ct)
+        {
+           var orders = await _repo.GetAllAsync<Order>(filter, ct);
+            var orderIds = orders.Select(o => o.Id).ToList();
+            var productIds = orders.SelectMany(o => o.OrderItems.Select(oi => oi.ProductId)).Distinct().ToList();
+            var paymentrequest = new RequestOrderIdList();
+            paymentrequest.OrderIds.AddRange(orderIds);
+            var paymentTask =  _paymentClient.GetPaymentsByOrderIdsAsync(paymentrequest, cancellationToken: ct);
+
+            var productrequest = new RequestProductIds();
+            productrequest.ProductIds.AddRange(productIds);
+            var productTask =  _productClient.GetProductsByIdsAsync(productrequest, cancellationToken: ct);
+
+            await Task.WhenAll(paymentTask.ResponseAsync, productTask.ResponseAsync);
+
+            var payments = (await paymentTask).Items;
+            var products = (await productTask).Items;
+
+            //Dictionary Lookup (O(1))
+            var paymentDict = payments.ToDictionary(p => p.OrderId, p => p);
+            var productDict = products.ToDictionary(pr => pr.Id, pr => pr);
+            var result = orders.Select(order =>
+            {
+                var hasPayment = paymentDict.TryGetValue(order.Id, out var payment);
+
+                var orderItemDtos = order.OrderItems.Select(item =>
+                {
+                    var hasProduct = productDict.TryGetValue(item.ProductId, out var product);
+
+                    return new OrderItemDetailDTO
+                    {
+                        ProductId = item.ProductId,
+                        ProductName = hasProduct ? product.Name : "-",
+                        Quantity = item.Quantity,
+                        UnitPrice = hasProduct ? (decimal)product.Price : 0,
+                        TotalPrice = hasProduct ? (decimal)product.Price * item.Quantity : 0
+                    };
+                }).ToList();
+
+                return new OrderListViewDTO
+                {
+                    OrderId = order.Id,
+                    OrderStatus = order.Status,
+                    PaymentId = payment?.Id,
+                    Amount = payment != null ? (decimal)payment.Amount : 0,
+                    Currency = payment?.Currency,
+                    PaymentStatus = payment?.PaymentStatus,
+                    Items = orderItemDtos
+                };
+            }).ToList();
+             return result;
         }
         #endregion
     }

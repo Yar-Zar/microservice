@@ -1,4 +1,7 @@
-﻿namespace ProductService.Infrastructure.Repositories;
+﻿using Shared.GrpcContracts.Payment;
+using Shared.GrpcContracts.Product;
+
+namespace ProductService.Infrastructure.Repositories;
 public class ProductRepository : IProductRepository
 {
     private readonly ProductDbContext _context;
@@ -107,6 +110,22 @@ public class ProductRepository : IProductRepository
         }
 
         return await _queryHelper.QueryAsync<T>(selector.RawSql, parameters, ct);
+    }
+
+    public async Task<List<ProductResponseDto>> GetByIdsAsync(IEnumerable<int> productIds, CancellationToken ct)
+    {
+
+        var products = await _context.Products
+     .Where(p => productIds.Contains(p.Id))
+     .Select(x => new ProductResponseDto
+     {
+         Id = x.Id,
+         Name = x.Name,
+         Price =(double) x.Price
+     })
+     .ToListAsync(ct);
+
+        return products;
     }
     //public async Task<IEnumerable<T>> GetDataAsync<T>(System.Linq.Expressions.Expression<Func<Product, T>> selector)
     //{

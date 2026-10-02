@@ -8,6 +8,7 @@ on:
       - 'PaymentService.Application/**'
       - 'PaymentService.Domain/**'
       - 'PaymentService.Infrastructure/**'
+      - 'Shared.Contracts/**'
   pull_request:
     branches: [ "main" ]
     paths:
@@ -15,6 +16,7 @@ on:
       - 'PaymentService.Application/**'
       - 'PaymentService.Domain/**'
       - 'PaymentService.Infrastructure/**'
+      - 'Shared.Contracts/**'
 
 jobs:
   build-and-test:
@@ -32,6 +34,9 @@ jobs:
         run: dotnet restore PaymentService.Api/PaymentService.Api.csproj
 
       - name: Build Project
+        env:
+          ConnectionStrings__DefaultConnection: ${{ secrets.ConnectionStrings__DefaultConnection }}
+          Serilog__WriteTo__1__Args__connectionString: ${{ secrets.Serilog__WriteTo__1__Args__connectionString }}
         run: dotnet build PaymentService.Api/PaymentService.Api.csproj --no-restore --configuration Release
 
   docker-build-and-push:

@@ -1,13 +1,13 @@
 ﻿global using Microsoft.EntityFrameworkCore.Storage;
 global using FluentValidation;
 global using MassTransit;
+global using Shared.Contracts.Exceptions;
 global using Mapster;
 global using MapsterMapper;
+global using Shared.Contracts.Models;
 global using Microsoft.Extensions.DependencyInjection;
 global using System.ComponentModel.DataAnnotations;
-global using OrderService.Application.Common.Models;
 global using OrderService.Application.DTOs;
-global using OrderService.Application.Common.Exceptions;
 global using OrderService.Application.Interfaces.IRepository;
 global using OrderService.Domain.Entities;
 global using OrderService.Application.Common.Cache;

@@ -1,0 +1,7 @@
+﻿syntax = "proto3";
+option csharp_namespace = "Shared.GrpcContracts.Order";
+package order;
+import "Common/order_messages.proto";
+service OrderGrpcService {
+  rpc UpdateOrderStatus (UpdateOrderStatusRequest) returns (UpdateOrderStatusResponse);
+}

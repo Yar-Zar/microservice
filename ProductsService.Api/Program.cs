@@ -13,6 +13,7 @@ try
 
     // Configure the HTTP request pipeline.
     app.ConfigurePipeline();
+    app.MapCustomGrpcServices();
     app.MapEndpoints();
     app.Run();
 }

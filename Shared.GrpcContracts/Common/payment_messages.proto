@@ -1,0 +1,26 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "Shared.GrpcContracts.Payment";
+package payment;
+message RefundPaymentRequest {
+  string order_id = 1;
+}
+message RefundPaymentResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message RequestOrderIdList {
+  repeated string order_ids = 1;
+}
+message PaymentResponseDto {
+  int32 id = 1;
+  string order_id = 2;
+  double amount = 3;
+  string currency = 4;
+  string payment_status = 5;
+}
+
+message PaymentListResponse {
+  repeated PaymentResponseDto items = 1;
+}

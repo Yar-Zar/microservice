@@ -1,4 +1,4 @@
-﻿namespace OrderService.Application.Common.Exceptions;
+﻿namespace Shared.Contracts.Exceptions;
 public class NotFoundException : Exception
 {
     public NotFoundException() : base("Data was not found.")

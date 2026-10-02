@@ -1,7 +1,7 @@
-﻿global using OrderService.Application.Common.Models;
+﻿global using Shared.Contracts.Models;
+global using Shared.Contracts.Exceptions;
 global using OrderService.Application.DTOs;
 global using Microsoft.EntityFrameworkCore;
-global using OrderService.Application.Common.Exceptions;
 global using System.Net;
 global using System.Security;
 global using System.Text.Json;
@@ -16,5 +16,4 @@ global using OrderService.Infrastructure.Common.Extensions;
 global using Serilog.Debugging;
 global using System.Text;
 global using Serilog;
-global using Serilog.Context; 
 global using MassTransit; 

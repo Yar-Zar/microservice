@@ -1,0 +1,159 @@
+{
+  "Routes": [
+    {
+      "Key": "user-route",
+
+      "UpstreamPathTemplate": "/api/users/{everything}",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete",
+        "Patch",
+        "Options"
+      ],
+
+      "DownstreamPathTemplate": "/api/users/{everything}",
+      "DownstreamScheme": "https",
+
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5004
+        }
+      ],
+
+      "LoadBalancerOptions": {
+        "Type": "NoLoadBalancer"
+      },
+
+      "RateLimitOptions": {
+        "EnableRateLimiting": false,
+        //"EnableHeaders": true,
+        //"Limit": 5,
+        //"Period": "1s",
+        //"Wait": "1s",
+        //"StatusCode": 429,
+        //"QuotaMessage": "Too many requests. Please try again later."
+      }
+    },
+
+    {
+      "Key": "product-route",
+
+      "UpstreamPathTemplate": "/api/products/{everything}",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete",
+        "Patch",
+        "Options"
+      ],
+
+      "DownstreamPathTemplate": "/api/products/{everything}",
+      "DownstreamScheme": "https",
+
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7070
+        }
+      ],
+
+      "LoadBalancerOptions": {
+        "Type": "NoLoadBalancer"
+      },
+
+      "RateLimitOptions": {
+        "EnableRateLimiting": false,
+        //"EnableHeaders": true,
+        //"Limit": 5,
+        //"Period": "1s",
+        //"Wait": "1s",
+        //"StatusCode": 429,
+        //"QuotaMessage": "Too many product requests. Please try again later."
+      }
+    },
+
+    {
+      "Key": "order-route",
+
+      "UpstreamPathTemplate": "/api/orders/{everything}",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete",
+        "Patch",
+        "Options"
+      ],
+
+      "DownstreamPathTemplate": "/api/orders/{everything}",
+      "DownstreamScheme": "https",
+
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7256
+        }
+      ],
+
+      "LoadBalancerOptions": {
+        "Type": "NoLoadBalancer"
+      },
+
+      "RateLimitOptions": {
+        "EnableRateLimiting": false,
+        //"EnableHeaders": true,
+        //"Limit": 5,
+        //"Period": "1s",
+        //"Wait": "1s",
+        //"StatusCode": 429,
+        //"QuotaMessage": "Too many order requests. Please try again later."
+      }
+    },
+
+    {
+      "Key": "payment-route",
+
+      "UpstreamPathTemplate": "/api/payments/{everything}",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete",
+        "Patch",
+        "Options"
+      ],
+
+      "DownstreamPathTemplate": "/api/payments/{everything}",
+      "DownstreamScheme": "https",
+
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7096
+        }
+      ],
+
+      "LoadBalancerOptions": {
+        "Type": "NoLoadBalancer"
+      },
+
+      "RateLimitOptions": {
+        "EnableRateLimiting": false,
+        //"EnableHeaders": true,
+        //"Limit": 2,
+        //"Period": "1s",
+        //"Wait": "1s",
+        //"StatusCode": 429,
+        //"QuotaMessage": "Too many payment requests. Please try again later."
+      }
+    }
+  ],
+
+  "GlobalConfiguration": {
+    "BaseUrl": "https://localhost:7020"
+  }
+}

@@ -3,6 +3,7 @@ using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
+using Ocelot.DependencyInjection;
 
 namespace ApiGateway.Extensions;
 
@@ -57,8 +58,8 @@ public static class DependencyInjectionExtensions
         // 4. Add YARP Reverse Proxy Services
         services.AddReverseProxy()
             .LoadFromConfig(configuration.GetSection("ReverseProxy"));
-
-        // 5. Add Caching & Rate Limiting (အရင်အတိုင်း)
+        //services.AddOcelot(configuration);
+        // 5. Add Caching & Rate Limiting 
         services.AddOutputCache(options =>
         {
             options.AddBasePolicy(builder => builder.Expire(TimeSpan.FromSeconds(30)));
@@ -76,7 +77,7 @@ public static class DependencyInjectionExtensions
             });
             options.AddFixedWindowLimiter("strict", cfg =>
             {
-                cfg.PermitLimit = 10;                  
+                cfg.PermitLimit = 10;
                 cfg.Window = TimeSpan.FromSeconds(10);
                 cfg.QueueLimit = 0;
             });

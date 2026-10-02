@@ -8,7 +8,7 @@ global using ProductService.Infrastructure.Data;
 global using ProductService.Infrastructure.Repositories;
 global using ProductService.Domain.Entities;
 global using Microsoft.EntityFrameworkCore.Storage;
-global using ProductService.Application.Common.Models;
+global using Shared.Contracts.Models;
 global using ProductService.Infrastructure.Common;
 global using System.Linq.Expressions;
 global using System.Data;

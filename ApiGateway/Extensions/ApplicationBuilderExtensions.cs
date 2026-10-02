@@ -1,4 +1,6 @@
-﻿namespace ApiGateway.Extensions;
+﻿using Ocelot.Middleware;
+
+namespace ApiGateway.Extensions;
 
 public static class ApplicationBuilderExtensions
 {
@@ -17,10 +19,10 @@ public static class ApplicationBuilderExtensions
         app.UseCors("AllowSpecificOrigin");
 
         // 2. Rate Limiter Middleware
-        app.UseRateLimiter();
+        //app.UseRateLimiter();
 
         // 3. Output Caching Middleware
-        app.UseOutputCache();
+        //app.UseOutputCache();
 
         // 4. Custom Correlation ID Middleware
         app.Use(async (context, next) =>
@@ -46,6 +48,7 @@ public static class ApplicationBuilderExtensions
 
         // 6. Map YARP Reverse Proxy Middleware
         app.MapReverseProxy();
+        //app.UseOcelot().Wait();
 
         return app;
     }

@@ -1,4 +1,4 @@
-﻿namespace ProductService.Application.Common.Models;
+﻿namespace Shared.Contracts.Models;
 public class ResponseModel
 {
     public bool IsSuccess { get; set; }
