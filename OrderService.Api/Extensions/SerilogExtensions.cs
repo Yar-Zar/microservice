@@ -3,13 +3,10 @@ public static class SerilogExtensions
 {
     public static IHostBuilder ConfigureSerilog(this IHostBuilder hostBuilder)
     {
-        hostBuilder.UseSerilog((context, configuration) => configuration
-          .ReadFrom.Configuration(context.Configuration)
-          .Enrich.FromLogContext()
-          .Enrich.WithCorrelationId()
-          .Enrich.WithEnvironmentUserName()
-          .Enrich.WithThreadId()
-          .Enrich.WithProcessId());
+        hostBuilder.UseSerilog((context, services, configuration) => configuration
+                 .ReadFrom.Configuration(context.Configuration)
+                 .ReadFrom.Services(services)
+                 .Enrich.FromLogContext());
 
         return hostBuilder;
     }
