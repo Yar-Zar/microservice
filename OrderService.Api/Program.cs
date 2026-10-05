@@ -1,12 +1,12 @@
 
-//Log.Logger = new LoggerConfiguration()
-//    .WriteTo.Console()
-//    .CreateBootstrapLogger();
-//try
-//{
-//    Log.Information("Order Api Starting Up...");
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateBootstrapLogger();
+try
+{
+    Log.Information("Order Api Starting Up...");
     var builder = WebApplication.CreateBuilder(args);
-   // builder.Host.ConfigureSerilog();
+    builder.Host.ConfigureSerilog();
     builder.Services.AddJwtAuthentication(builder.Configuration);
     builder.Services.AddApiServices(builder.Configuration);
     builder.Services.AddApplicationServices(builder.Configuration);
@@ -19,15 +19,15 @@
     app.MapCustomGrpcServices();
     app.MapEndpoints();
     app.Run();
-//}
-//catch (Exception ex)
-//{
-//    Log.Fatal(ex, "Application start-up failed!");
-//}
-//finally
-//{
-//    Log.CloseAndFlush();
-//}
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Application start-up failed!");
+}
+finally
+{
+    Log.CloseAndFlush();
+}
 
 
 
