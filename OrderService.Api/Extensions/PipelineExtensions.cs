@@ -5,10 +5,10 @@ public static class PipelineExtensions
     {
         app.UseMiddleware<CorrelationIdMiddleware>();
         app.UseMiddleware<GlobalExceptionHandler>();
-        object value = app.UseSerilogRequestLogging(options =>
-        {
-            options.MessageTemplate = "HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms";
-        });
+        //object value = app.UseSerilogRequestLogging(options =>
+        //{
+        //    options.MessageTemplate = "HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms";
+        //});
 
         //if (app.Environment.IsDevelopment())
         //{

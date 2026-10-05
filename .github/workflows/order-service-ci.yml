@@ -34,9 +34,9 @@ jobs:
         run: dotnet restore OrderService.Api/OrderService.Api.csproj
 
       - name: Build Project
-        env:
-          ConnectionStrings__DefaultConnection: ${{ secrets.ConnectionStrings__DefaultConnection }}
-          Serilog__WriteTo__1__Args__connectionString: ${{ secrets.Serilog__WriteTo__1__Args__connectionString }}
+        # env:
+        #   ConnectionStrings__DefaultConnection: ${{ secrets.ConnectionStrings__DefaultConnection }}
+        #   Serilog__WriteTo__1__Args__connectionString: ${{ secrets.Serilog__WriteTo__1__Args__connectionString }}
         run: dotnet build OrderService.Api/OrderService.Api.csproj --no-restore --configuration Release
 
   docker-build-and-push:
