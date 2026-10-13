@@ -120,7 +120,7 @@ public class OrderItemTempServiceUnitTests
         response.IsSuccess.Should().BeTrue();
         response.StatusCode.Should().Be("200");
 
-        // Cache Interactions များကို Verify လုပ်ရန်
+        
         _mockCache.Verify(c => c.GetAsync<OrderItemDTO>(request.OrderId, request.ProductId.ToString()), Times.Once);
         _mockCache.Verify(c => c.UpdateAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<OrderItemDTO>(), It.IsAny<TimeSpan>()), Times.Once);
         _mockCache.Verify(c => c.GetAllAsync<OrderItemDTO>(request.OrderId), Times.Once);
