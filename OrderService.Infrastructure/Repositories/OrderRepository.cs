@@ -115,11 +115,11 @@ public class OrderRepository : IOrderRepository
     public async Task<IEnumerable<T>> GetItemsByOrderIdAsync<T>(string orderId, CancellationToken ct = default)
     {
         var builder = new SqlBuilder();
-        var sql = @"select * from OrderItem /**where**/ /**orderby**/";
+        var sql = @"select * from OrderItems /**where**/ /**orderby**/";
         var selector = builder.AddTemplate(sql);
         builder.Where("OrderId = @orderId", new { orderId });
         builder.OrderBy($" Id Desc");
-        return await _queryHelper.QueryAsync<T>(selector.RawSql, ct);
+        return await _queryHelper.QueryAsync<T>(selector.RawSql, selector.Parameters, ct);
     }
     public async Task DeleteItemsByOrderIdAsync(string id, CancellationToken ct)
     {

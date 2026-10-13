@@ -16,7 +16,7 @@ public class OrderDTO
     public DateTime OrderDate { get; set; }
 
     [Required]
-    [Column(TypeName = "decimal(18,2)]")]
+    [Column(TypeName = "decimal(18,2)")]
     public decimal TotalAmount { get; set; }
 
     [Required]

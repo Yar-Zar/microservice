@@ -9,6 +9,8 @@ on:
       - 'OrderService.Domain/**'
       - 'OrderService.Infrastructure/**'
       - 'Shared.Contracts/**'
+      - 'OrderService.UnitTests/**'
+      - 'OrderService.IntegrationTests/**'
   pull_request:
     branches: [ "main" ]
     paths:
@@ -17,6 +19,8 @@ on:
       - 'OrderService.Domain/**'
       - 'OrderService.Infrastructure/**'
       - 'Shared.Contracts/**'
+      - 'OrderService.UnitTests/**'
+      - 'OrderService.IntegrationTests/**'
 
 jobs:
   build-and-test:
@@ -34,10 +38,13 @@ jobs:
         run: dotnet restore OrderService.Api/OrderService.Api.csproj
 
       - name: Build Project
-        # env:
-        #   ConnectionStrings__DefaultConnection: ${{ secrets.ConnectionStrings__DefaultConnection }}
-        #   Serilog__WriteTo__1__Args__connectionString: ${{ secrets.Serilog__WriteTo__1__Args__connectionString }}
         run: dotnet build OrderService.Api/OrderService.Api.csproj --no-restore --configuration Release
+      
+      - name: Run Unit Tests
+        run: dotnet test OrderService.UnitTests/OrderService.UnitTests.csproj --configuration Release --no-build --verbosity normal
+      
+      - name: Run Integration Tests
+        run: dotnet test OrderService.IntegrationTests/OrderService.IntegrationTests.csproj --configuration Release --no-build --verbosity normal
 
   docker-build-and-push:
     needs: build-and-test

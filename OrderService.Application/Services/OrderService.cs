@@ -16,12 +16,12 @@ namespace OrderService.Application.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<Order_Service> _logger;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly OrderDTOValidator _validator;
+        private readonly IValidator<OrderDTO> _validator;
         private readonly UpdateOrderValidator _updatevalidator;
         private readonly IPublishEndpoint _publishEndpoint;
         private readonly PaymentGrpcServiceClient _paymentClient;
         private readonly ProductGrpcServiceClient _productClient;
-        public Order_Service(IRedisHashProvider cache, IOrderRepository repo, IHttpContextAccessor httpContextAccessor, OrderDTOValidator validator, UpdateOrderValidator updatevalidator, ILogger<Order_Service> logger, IUnitOfWork unitOfWork, IPublishEndpoint publishEndpoint, PaymentGrpcServiceClient paymentClient, ProductGrpcServiceClient productClient)
+        public Order_Service(IRedisHashProvider cache, IOrderRepository repo, IHttpContextAccessor httpContextAccessor, IValidator<OrderDTO> validator, UpdateOrderValidator updatevalidator, ILogger<Order_Service> logger, IUnitOfWork unitOfWork, IPublishEndpoint publishEndpoint, PaymentGrpcServiceClient paymentClient, ProductGrpcServiceClient productClient)
         {
             _cache = cache;
             _repo = repo;
