@@ -34,8 +34,11 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - name: Restore Dependencies
-        run: dotnet restore OrderService.Api/OrderService.Api.csproj
+      - name: Restore Order Service Dependencies
+        run: |
+          dotnet restore OrderService.Api/OrderService.Api.csproj
+          dotnet restore OrderService.UnitTests/OrderService.UnitTests.csproj
+          dotnet restore OrderService.IntegrationTests/OrderService.IntegrationTests.csproj
 
       - name: Build Project
         run: |
