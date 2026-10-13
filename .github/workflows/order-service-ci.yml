@@ -38,7 +38,10 @@ jobs:
         run: dotnet restore OrderService.Api/OrderService.Api.csproj
 
       - name: Build Project
-        run: dotnet build OrderService.Api/OrderService.Api.csproj --no-restore --configuration Release
+        run: |
+          dotnet build OrderService.Api/OrderService.Api.csproj --no-restore --configuration Release
+          dotnet build OrderService.UnitTests/OrderService.UnitTests.csproj --no-restore --configuration Release
+          dotnet build OrderService.IntegrationTests/OrderService.IntegrationTests.csproj --no-restore --configuration Release
       
       - name: Run Unit Tests
         run: dotnet test OrderService.UnitTests/OrderService.UnitTests.csproj --configuration Release --no-build --verbosity normal
