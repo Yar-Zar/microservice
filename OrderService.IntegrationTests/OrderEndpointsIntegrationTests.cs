@@ -188,10 +188,6 @@ public class OrderEndpointsIntegrationTests : IClassFixture<CustomWebApplication
         try
         {
             var response = await _client.GetAsync("/api/orders/GetOrder/");
-            var body = await response.Content.ReadAsStringAsync();
-
-            Console.WriteLine($"Status: {response.StatusCode}");
-            Console.WriteLine(body);
             response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
         catch (Exception ex)
