@@ -9,6 +9,8 @@ on:
       - 'ProductService.Domain/**'
       - 'ProductService.Infrastructure/**'
       - 'Shared.Contracts/**'
+      - 'ProductService.UnitTests/**'
+      - 'ProductService.IntegrationTests/**'
   pull_request:
     branches: [ "main" ]
     paths:
@@ -17,6 +19,8 @@ on:
       - 'ProductService.Domain/**'
       - 'ProductService.Infrastructure/**'
       - 'Shared.Contracts/**'
+      - 'ProductService.UnitTests/**'
+      - 'ProductService.IntegrationTests/**'
 
 jobs:
   build-and-test:
@@ -30,14 +34,26 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - name: Restore Dependencies
-        run: dotnet restore ProductsService.Api/ProductsService.Api.csproj
+      - name: Restore Product Service Dependencies
+        run: |
+            dotnet restore ProductsService.Api/ProductsService.Api.csproj
+            dotnet restore ProductService.UnitTests/ProductService.UnitTests.csproj
+            dotnet restore ProductService.IntegrationTests/ProductService.IntegrationTests.csproj
 
       - name: Build Project
-        env:
-          ConnectionStrings__DefaultConnection: ${{ secrets.ConnectionStrings__DefaultConnection }}
-          Serilog__WriteTo__1__Args__connectionString: ${{ secrets.Serilog__WriteTo__1__Args__connectionString }}
-        run: dotnet build ProductsService.Api/ProductsService.Api.csproj --no-restore --configuration Release
+        # env:
+        #   ConnectionStrings__DefaultConnection: ${{ secrets.ConnectionStrings__DefaultConnection }}
+        #   Serilog__WriteTo__1__Args__connectionString: ${{ secrets.Serilog__WriteTo__1__Args__connectionString }}
+        run: |
+            dotnet build ProductsService.Api/ProductsService.Api.csproj --no-restore --configuration Release
+            dotnet build ProductService.UnitTests/ProductService.UnitTests.csproj --no-restore --configuration Release
+            dotnet build ProductService.IntegrationTests/ProductService.IntegrationTests.csproj --no-restore --configuration Release
+
+      - name: Run Unit Tests
+        run: dotnet test ProductService.UnitTests/ProductService.UnitTests.csproj --configuration Release --no-build --verbosity normal
+      
+      - name: Run Integration Tests
+        run: dotnet test ProductService.IntegrationTests/ProductService.IntegrationTests.csproj --configuration Release --no-build --verbosity normal
 
   docker-build-and-push:
     needs: build-and-test

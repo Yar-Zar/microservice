@@ -68,13 +68,13 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>, IAsyn
                 options.UseSqlServer(_dbContainer.GetConnectionString());
             });
 
-            // --- 3. gRPC Mocks ---
+            // --- 2. gRPC Mocks ---
             services.RemoveAll<OrderGrpcServiceClient>();
             var orderGrpcMock = new Mock<OrderGrpcServiceClient>();
             orderGrpcMock.SetupUpdateOrderStatus();
             services.AddSingleton(orderGrpcMock.Object);
 
-            // --- 4. Database Schema Creation ---
+            // --- 3. Database Schema Creation ---
             var sp = services.BuildServiceProvider();
             using var scope = sp.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<PaymentDbContext>();
