@@ -1,21 +1,4 @@
-﻿using FluentAssertions;
-using FluentValidation;
-using Microsoft.Extensions.Logging;
-using Moq;
-using OrderService.Application.Common.Cache;
-using OrderService.Application.DTOs;
-using OrderService.Application.Services;
-using OrderService.Application.Validations.OrderItems;
-using OrderService.Application.Validations.Orders;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace OrderService.UnitTests;
-
+﻿namespace OrderService.UnitTests;
 public class OrderItemTempServiceUnitTests
 {
     private readonly Mock<IRedisHashProvider> _mockCache;

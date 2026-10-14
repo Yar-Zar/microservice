@@ -1,0 +1,14 @@
+﻿global using FluentAssertions;
+global using Grpc.Core;
+global using MassTransit;
+global using Microsoft.AspNetCore.Http;
+global using Microsoft.Extensions.Logging;
+global using Moq;
+global using PaymentService.Application.DTOs;
+global using PaymentService.Application.Interfaces.IRepository;
+global using PaymentService.Application.Services;
+global using PaymentService.Application.Validations;
+global using PaymentService.Domain.Entities;
+global using Shared.Contracts.Events;
+global using Shared.Contracts.Exceptions;
+global using Shared.GrpcContracts.Order;

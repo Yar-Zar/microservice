@@ -19,6 +19,9 @@ global using Shared.GrpcContracts.Payment;
 global using Shared.GrpcContracts.Product;
 global using System.Data.Common;
 global using Testcontainers.MsSql;
+global using OrderService.Infrastructure.Common.CacheProvider;
+global using StackExchange.Redis;
+global using Testcontainers.Redis;
 global using static Shared.GrpcContracts.Payment.PaymentGrpcService;
 global using static Shared.GrpcContracts.Product.ProductGrpcService;
 

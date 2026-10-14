@@ -1,0 +1,16 @@
+﻿global using FluentAssertions;
+global using FluentValidation;
+global using Microsoft.Extensions.Logging;
+global using Moq;
+global using OrderService.Application.Common.Cache;
+global using OrderService.Application.DTOs;
+global using OrderService.Application.Services;
+global using OrderService.Application.Validations.OrderItems;
+global using MassTransit;
+global using Microsoft.AspNetCore.Http;
+global using OrderService.Application.Interfaces.IRepository;
+global using OrderService.Application.Validations.Orders;
+global using OrderService.Domain.Entities;
+global using Shared.Contracts.Models;
+global using Shared.GrpcContracts.Payment;
+global using Shared.GrpcContracts.Product;

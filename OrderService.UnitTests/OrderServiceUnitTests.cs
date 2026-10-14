@@ -1,21 +1,4 @@
-﻿using FluentAssertions;
-using FluentValidation;
-using MassTransit;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-using Moq;
-using OrderService.Application.Common.Cache;
-using OrderService.Application.DTOs;
-using OrderService.Application.Interfaces.IRepository;
-using OrderService.Application.Services;
-using OrderService.Application.Validations.Orders;
-using OrderService.Domain.Entities;
-using Shared.Contracts.Models;
-using Shared.GrpcContracts.Payment;
-using Shared.GrpcContracts.Product;
-
-namespace OrderService.UnitTests;
-
+﻿namespace OrderService.UnitTests;
 public class OrderServiceUnitTests
 {
     private readonly Mock<IRedisHashProvider> _mockCache;

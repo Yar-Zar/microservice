@@ -1,8 +1,4 @@
-﻿using OrderService.Infrastructure.Common.CacheProvider;
-using StackExchange.Redis;
-using Testcontainers.Redis;
-
-namespace OrderService.IntegrationTests;
+﻿namespace OrderService.IntegrationTests;
 
 public class CustomWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
@@ -96,60 +92,12 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>, IAsyn
             // --- 3. gRPC Mocks ---
             services.RemoveAll<PaymentGrpcServiceClient>();
             var paymentGrpcMock = new Mock<PaymentGrpcServiceClient>();
-            paymentGrpcMock
-                .Setup(client => client.GetPaymentsByOrderIdsAsync(
-                    It.IsAny<RequestOrderIdList>(),
-                    It.IsAny<Metadata>(),
-                    It.IsAny<DateTime?>(),
-                    It.IsAny<CancellationToken>()))
-                .Returns(new AsyncUnaryCall<PaymentListResponse>(
-                    Task.FromResult(new PaymentListResponse
-                    {
-                        Items =
-                        {
-                            new PaymentResponseDto
-                            {
-                                Id = 1,
-                                OrderId = "ORD-001",
-                                Amount = 150.0,
-                                Currency = "USD",
-                                PaymentStatus = "Completed"
-                            }
-                        }
-                    }),
-                    Task.FromResult(new Metadata()),
-                    () => Status.DefaultSuccess,
-                    () => new Metadata(),
-                    () => { }));
-
+            paymentGrpcMock.SetupGetPaymentsByOrderIds(); 
             services.AddSingleton(paymentGrpcMock.Object);
 
             services.RemoveAll<ProductGrpcServiceClient>();
             var productGrpcMock = new Mock<ProductGrpcServiceClient>();
-            productGrpcMock
-                .Setup(client => client.GetProductsByIdsAsync(
-                    It.IsAny<RequestProductIds>(),
-                    It.IsAny<Metadata>(),
-                    It.IsAny<DateTime?>(),
-                    It.IsAny<CancellationToken>()))
-                .Returns(new AsyncUnaryCall<ProductListResponse>(
-                    Task.FromResult(new ProductListResponse
-                    {
-                        Items =
-                        {
-                            new ProductResponseDto
-                            {
-                                Id = 1,
-                                Name = "Sample Product",
-                                Price = 75.0
-                            }
-                        }
-                    }),
-                    Task.FromResult(new Metadata()),
-                    () => Status.DefaultSuccess,
-                    () => new Metadata(),
-                    () => { }));
-
+            productGrpcMock.SetupGetProductsByIds();
             services.AddSingleton(productGrpcMock.Object);
 
             // --- 4. Database Schema Creation ---

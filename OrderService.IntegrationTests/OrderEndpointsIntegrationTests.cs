@@ -67,7 +67,7 @@ public class OrderEndpointsIntegrationTests : IClassFixture<CustomWebApplication
             var existing = await db.Orders.FindAsync(orderId);
             if (existing == null)
             {
-                db.Orders.Add(new Order
+                db.Orders.Add(new Domain.Entities.Order
                 {
                     Id = orderId,
                     CustomerId = "CUST-001",
@@ -123,7 +123,7 @@ public class OrderEndpointsIntegrationTests : IClassFixture<CustomWebApplication
         using (var scope = _factory.Services.CreateScope())
         {
             var db = scope.ServiceProvider.GetRequiredService<OrderDbContext>();
-            db.Orders.Add(new Order
+            db.Orders.Add(new Domain.Entities.Order
             {
                 Id = orderId,
                 CustomerId = "CUST-001",
@@ -143,7 +143,7 @@ public class OrderEndpointsIntegrationTests : IClassFixture<CustomWebApplication
         using (var scope = _factory.Services.CreateScope())
         {
             var db = scope.ServiceProvider.GetRequiredService<OrderDbContext>();
-            db.Orders.Add(new Order
+            db.Orders.Add(new Domain.Entities.Order
             {
                 Id = "ORD-004",
                 CustomerId = "CUST-001",
@@ -175,7 +175,7 @@ public class OrderEndpointsIntegrationTests : IClassFixture<CustomWebApplication
         using (var scope = _factory.Services.CreateScope())
         {
             var db = scope.ServiceProvider.GetRequiredService<OrderDbContext>();
-            db.Orders.Add(new Order
+            db.Orders.Add(new Domain.Entities.Order
             {
                 Id = "ORD-005",
                 CustomerId = "CUST-001",
@@ -205,7 +205,7 @@ public class OrderEndpointsIntegrationTests : IClassFixture<CustomWebApplication
         using (var scope = _factory.Services.CreateScope())
         {
             var db = scope.ServiceProvider.GetRequiredService<OrderDbContext>();
-            db.Orders.Add(new Order
+            db.Orders.Add(new Domain.Entities.Order
             {
                 Id = orderId,
                 CustomerId = "CUST-001",
