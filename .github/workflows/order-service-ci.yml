@@ -113,8 +113,8 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          # 3. Order Service အတွက် values ဖိုင်ရှိရာလမ်းကြောင်း (ဥပမာ- apps/values/order-service-values.yaml)
-          VALUES_PATH="apps/values/order-service-values.yaml"
+          # 3. Order Service အတွက် values ဖိုင်ရှိရာလမ်းကြောင်း (ဥပမာ- apps/values/order-service.yaml)
+          VALUES_PATH="apps/values/order-service.yaml"
 
           if [ -f "$VALUES_PATH" ]; then
             # 4. Image Tag ကို Commit SHA အသစ်ဖြင့် အစားထိုးခြင်း
