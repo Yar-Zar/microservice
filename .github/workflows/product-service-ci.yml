@@ -103,7 +103,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          VALUES_PATH="apps/values/product-service-values.yaml"
+          VALUES_PATH="apps/values/product-service.yaml"
 
           if [ -f "$VALUES_PATH" ]; then
             sed -i 's/tag: .*/tag: "'${{ env.COMMIT_SHA }}'"/g' "$VALUES_PATH"
